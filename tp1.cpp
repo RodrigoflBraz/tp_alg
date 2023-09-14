@@ -230,7 +230,7 @@ int main() {
 
 
     //imprimirArestas(arestas);
-    int vertice_inicial = 1;
+    int vertice_inicial = 4;
     int indice_aresta_inicial = 0;
     
     //Encontrar a melhor aresta a partir de um vértice qualquer
@@ -263,10 +263,10 @@ int main() {
     std::cout << vetor_vertices_visitados.size();
 
     for (int elemento : vetor_vertices_visitados) {
-    std::cout << "Elemento: " << elemento + 1 << std::endl;
-}
+        std::cout << "Elemento: " << elemento + 1 << std::endl;
+    }
     
-    
+    imprimirArestas(arestas);
     
     arquivo.close(); 
     return 0;
