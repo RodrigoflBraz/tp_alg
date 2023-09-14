@@ -83,7 +83,7 @@ void imprimirVertices(const std::vector<Ponto>& vertices) {
 }
 
 bool compararPorInclinacao(const Aresta& a, const Aresta& b) {
-    return a.coeficiente_inclinacao > b.coeficiente_inclinacao;
+    return a.coeficiente_inclinacao < b.coeficiente_inclinacao;
 }
 
 
@@ -115,7 +115,7 @@ int encontrarArestaComMaiorInclinacao(const std::vector<Aresta>& vetorArestas) {
     double maiorInclinacao = vetorArestas[0].coeficiente_inclinacao;
 
     for (int i = 1; i < vetorArestas.size(); ++i) {
-        if (vetorArestas[i].coeficiente_inclinacao < maiorInclinacao) {
+        if (vetorArestas[i].coeficiente_inclinacao > maiorInclinacao) {
             // Se encontrarmos uma aresta com inclinação maior, atualize o índice e o valor da maior inclinação
             indiceMaiorInclinacao = i;
             maiorInclinacao = vetorArestas[i].coeficiente_inclinacao;
@@ -175,7 +175,7 @@ void dfsPorAresta(
 
 int main() {
     
-    std::ifstream arquivo("C:\\Users\\rodri\\Desktop\\cotovelo.txt"); 
+    std::ifstream arquivo("C:\\Users\\rodri\\Desktop\\tp_alg\\cotovelo.txt"); 
 
     if (!arquivo) {
         std::cerr << "Erro ao abrir o arquivo." << std::endl;
@@ -230,7 +230,7 @@ int main() {
 
 
     //imprimirArestas(arestas);
-    int vertice_inicial = 3;
+    int vertice_inicial = 1;
     int indice_aresta_inicial = 0;
     
     //Encontrar a melhor aresta a partir de um vértice qualquer
