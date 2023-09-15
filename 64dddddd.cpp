@@ -181,9 +181,6 @@ int main() {
    
     int numero_faces = 0;
     numero_faces = numero_arestas - numero_vertices + 2;
-    //int num_total_arestas = numero_arestas*2;
-    
-    //std::cout << numero_faces << std::endl;
     
     std::vector<std::vector<std::pair<int, double>>> vetores_de_adj_com_inclinacao;
 
@@ -200,62 +197,56 @@ int main() {
     }
     
     ordenar_vetores_de_adj_com_inclinacao(vetores_de_adj_com_inclinacao);
-    //imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
-    int vertice_inicial = 0;
-   
-    
-    //std::cout << "Aresta inicial inicio: " << aresta_inicial.inicio << "Aresta inicial destino: "  << aresta_inicial.destino << std::endl;
-    // imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
     
     std::vector<std::vector<int>> faces;
 
-    Aresta aresta_inicial = {vertice_inicial, vetores_de_adj_com_inclinacao[vertice_inicial][0].first};
-    faces.push_back(std::vector<int>());
-    faces[0].push_back(aresta_inicial.inicio);
-
     
-    // for (int valor : faces[0]) {
-    //     std::cout << valor << " ";
-    // }
 
-    //std::cout << aresta_inicial.inicio << " ";
-
-    std:: cout << std::endl;
-    
-    dfs_tunada(
-        vetores_de_adj_com_inclinacao,
-        aresta_inicial,
-        aresta_inicial,
-        faces[0]
-    );
-    
-    std:: cout << std::endl;
-    
-    for (int valor : faces[0]) {
-        std::cout << valor << " ";
-    }
-    
-    std:: cout << std::endl;
-
-    int quantidade_de_vertices_na_face = faces[0].size();
-
-    for (int i = 0; i < quantidade_de_vertices_na_face; i++){
+    std::cout << "Cheguei aqui 1" << std::endl;
+    for(int i = 0; i < numero_faces; i++){
         
-        int vertice_inicio = faces[0][i];
-        int vertice_destino = faces[0][i+1];
-        removerValor(vetores_de_adj_com_inclinacao, vertice_inicio, vertice_destino);
+        Aresta aresta_inicial;
+        
+        //Definir qual o vértice vamos usar como inicial nessa iteração da BFS
+        for(int j = 0; j < numero_vertices; j++){
+            if(vetores_de_adj_com_inclinacao[j].size() > 0){
+                Aresta aresta_inicial = {j, vetores_de_adj_com_inclinacao[j][0].first};
+                faces.push_back(std::vector<int>());
+                faces[i].push_back(aresta_inicial.inicio);
+                break;
+                }
+        }
+        
+        
+        dfs_tunada(
+            vetores_de_adj_com_inclinacao,
+            aresta_inicial,
+            aresta_inicial,
+            faces[i]
+        );
+    
+        int quantidade_de_vertices_na_face = faces[i].size();
 
-
+        for (int n = 0; n < quantidade_de_vertices_na_face; n++){
+            int vertice_inicio = faces[i][n];
+            int vertice_destino = faces[i][n+1];
+            removerValor(vetores_de_adj_com_inclinacao, vertice_inicio, vertice_destino);
+        }
+        
     }
+    
+    std::cout << "Cheguei aqui 2" << std::endl;
 
-    std:: cout << std::endl;
-
-    Aresta aresta_inicial = {vertice_inicial, vetores_de_adj_com_inclinacao[vertice_inicial][0].first};
-    faces.push_back(std::vector<int>());
-    faces[0].push_back(aresta_inicial.inicio);
+    std::cout << numero_faces << std::endl;
 
     arquivo.close(); 
     
+     for (const std::vector<int>& vetor : faces) {
+        for (int elemento : vetor) {
+            std::cout << elemento << " ";
+        }
+        std::cout << std::endl;
+    }   
     
     return 0;
 }
