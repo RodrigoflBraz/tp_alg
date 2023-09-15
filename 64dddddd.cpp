@@ -101,12 +101,10 @@ void dfs_tunada(
     const Aresta& aresta_atual,
     std::vector<int>& vertices_visitados)
 {   
-    std::cout << "Cheguei aqui ";
     
     // Se eu volto no vértice inicial, break
     if((vertices_visitados.size() != 1) && saoArestasIguais(aresta_inicial, aresta_atual)){return;}
-    std::cout << "Cheguei aqui 2";
-    std::cout << aresta_atual.destino << " ";
+    
     
     vertices_visitados.push_back(aresta_atual.destino);
     
@@ -114,13 +112,15 @@ void dfs_tunada(
     int indice_do_Vertice_anterior_na_adj_do_vertice_atual = encontrarIndicePorPrimeiroElemento(vetores_de_adj[aresta_atual.destino], aresta_atual.inicio);
     int indice_do_proximo_elemento = indice_do_Vertice_anterior_na_adj_do_vertice_atual + 1;
     
-    std::cout << "Cheguei aqui3 ";
     //Saber se esse indice pertence ao vetor de Adj do meu vertice
     if (indice_do_proximo_elemento >= 0 && indice_do_proximo_elemento < vetores_de_adj[aresta_atual.destino].size()){
         Aresta proxima_aresta = {aresta_atual.destino, vetores_de_adj[aresta_atual.destino][indice_do_proximo_elemento].first};
         dfs_tunada(vetores_de_adj, aresta_inicial, proxima_aresta, vertices_visitados);
     }
-    std::cout << "Cheguei aqui 4";
+    else{
+        Aresta proxima_aresta = {aresta_atual.destino, vetores_de_adj[aresta_atual.destino][0].first};
+        dfs_tunada(vetores_de_adj, aresta_inicial, proxima_aresta, vertices_visitados);        
+    }
 }
 
 
@@ -146,7 +146,6 @@ int main() {
     int grau_vertice;
     int vertice_adj_atual;
     
-    std::cout << "Cheguei aqui 01";
     
     // Computar os vértices nas EDS
     for (int i = 0; i < numero_vertices; i++) {
@@ -169,7 +168,6 @@ int main() {
         vetores_de_adj.push_back(vetor_de_adj);
     }
    
-    std::cout << "Cheguei aqui 02";
     int numero_faces = 0;
     numero_faces = numero_arestas - numero_vertices + 2;
     //int num_total_arestas = numero_arestas*2;
@@ -195,20 +193,20 @@ int main() {
     int vertice_inicial = 0;
    
     Aresta aresta_inicial = {vertice_inicial, vetores_de_adj_com_inclinacao[vertice_inicial][0].first};
-    std::cout << "Cheguei aqui 03";
     
     //std::cout << "Aresta inicial inicio: " << aresta_inicial.inicio << "Aresta inicial destino: "  << aresta_inicial.destino << std::endl;
     // imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
     
     std::vector<std::vector<int>> faces;
-    
-    // faces[0].push_back(aresta_inicial.inicio);
+    faces.push_back(std::vector<int>());
+    faces[0].push_back(aresta_inicial.inicio);
+
     
     // for (int valor : faces[0]) {
     //     std::cout << valor << " ";
     // }
 
-    std::cout << "Cheguei aqui 04";
+    //std::cout << aresta_inicial.inicio << " ";
 
     dfs_tunada(
         vetores_de_adj_com_inclinacao,
@@ -218,13 +216,12 @@ int main() {
     );
     
     
-    // for (int valor : faces[0]) {
-    //     std::cout << valor << " ";
-    // }
+    for (int valor : faces[0]) {
+        std::cout << valor << " ";
+    }
     
     arquivo.close(); 
     
-    std::cout << "Cheguei aqui 06";
     
     return 0;
 }
