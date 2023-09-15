@@ -5,8 +5,6 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
-#include <set>
-#include <utility>
 
 struct Aresta {
     int inicio, destino;
@@ -93,7 +91,20 @@ int encontrarIndicePorPrimeiroElemento(const std::vector<std::pair<int, double>>
         }
     }
     return -1;
+    
 }
+
+void removerValor(std::vector<std::vector<std::pair<int, double>>>& vetores_de_adj_inclinados, int vertice_inicial, int vertice_de_adj) {
+    if (vertice_inicial >= 0 && vertice_inicial < vetores_de_adj_inclinados.size()) {
+        vetores_de_adj_inclinados[vertice_inicial].erase(
+            std::remove_if(vetores_de_adj_inclinados[vertice_inicial].begin(), vetores_de_adj_inclinados[vertice_inicial].end(),
+                [vertice_de_adj](const std::pair<int, double>& par) {
+                    return par.first == vertice_de_adj;
+                }),
+            vetores_de_adj_inclinados[vertice_inicial].end());
+    }
+}
+
 
 void dfs_tunada(
     const std::vector<std::vector<std::pair<int, double>>>& vetores_de_adj,
@@ -192,12 +203,13 @@ int main() {
     //imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
     int vertice_inicial = 0;
    
-    Aresta aresta_inicial = {vertice_inicial, vetores_de_adj_com_inclinacao[vertice_inicial][0].first};
     
     //std::cout << "Aresta inicial inicio: " << aresta_inicial.inicio << "Aresta inicial destino: "  << aresta_inicial.destino << std::endl;
     // imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
     
     std::vector<std::vector<int>> faces;
+
+    Aresta aresta_inicial = {vertice_inicial, vetores_de_adj_com_inclinacao[vertice_inicial][0].first};
     faces.push_back(std::vector<int>());
     faces[0].push_back(aresta_inicial.inicio);
 
@@ -208,6 +220,8 @@ int main() {
 
     //std::cout << aresta_inicial.inicio << " ";
 
+    std:: cout << std::endl;
+    
     dfs_tunada(
         vetores_de_adj_com_inclinacao,
         aresta_inicial,
@@ -215,11 +229,31 @@ int main() {
         faces[0]
     );
     
+    std:: cout << std::endl;
     
     for (int valor : faces[0]) {
         std::cout << valor << " ";
     }
     
+    std:: cout << std::endl;
+
+    int quantidade_de_vertices_na_face = faces[0].size();
+
+    for (int i = 0; i < quantidade_de_vertices_na_face; i++){
+        
+        int vertice_inicio = faces[0][i];
+        int vertice_destino = faces[0][i+1];
+        removerValor(vetores_de_adj_com_inclinacao, vertice_inicio, vertice_destino);
+
+
+    }
+
+    std:: cout << std::endl;
+
+    Aresta aresta_inicial = {vertice_inicial, vetores_de_adj_com_inclinacao[vertice_inicial][0].first};
+    faces.push_back(std::vector<int>());
+    faces[0].push_back(aresta_inicial.inicio);
+
     arquivo.close(); 
     
     
