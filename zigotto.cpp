@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <utility>
 #include <set>
+#include <utility>
 
 struct Aresta {
     int inicio, destino;
@@ -75,9 +76,8 @@ void imprimirVetoresAdjComInclinacao(const std::vector<std::vector<std::pair<int
     }
 }
 
-void ordenarVetoresInternosDecrescente(std::vector<std::vector<std::pair<int, double>>>& vetor) {
+void ordenar_vetores_de_adj_com_inclinacao(std::vector<std::vector<std::pair<int, double>>>& vetor) {
     for (std::vector<std::pair<int, double>>& vetor_interno : vetor) {
-        // Use std::sort para ordenar o vetor interno em ordem decrescente
         std::sort(vetor_interno.begin(), vetor_interno.end(),
                   [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
                       return a.second > b.second; 
@@ -85,16 +85,39 @@ void ordenarVetoresInternosDecrescente(std::vector<std::vector<std::pair<int, do
     }
 }
 
+
+int encontrarIndicePorPrimeiroElemento(const std::vector<std::pair<int, double>>& vetorDePares, int N) {
+    for (size_t i = 0; i < vetorDePares.size(); ++i) {
+        if (vetorDePares[i].first == N) {
+            return static_cast<int>(i);
+        }
+    }
+    return -1;
+}
+
 void dfs_tunada(
-    const std::vector<std::vector<std::pair<int, double>>>& vetorDeVetoresDePar,
+    const std::vector<std::vector<std::pair<int, double>>>& vetores_de_adj,
     const Aresta& aresta_inicial,
-    const Aresta& aresta_atual
-){
+    const Aresta& aresta_atual,
+    std::vector<int>& vertices_visitados)
+{
+    // Se eu volto no vértice inicial, break
+    if(vertices_visitados.size() > 1 && saoArestasIguais(aresta_inicial, aresta_atual)){return;}
 
-
-
-
-
+    vertices_visitados.push_back(aresta_atual.destino);
+    
+    //Saber qual indice do meu vetor de adj do destino da aresta corrresponde ao inicio da minha aresta.
+    int indice_do_Vertice_anterior_na_adj_do_vertice_atual = encontrarIndicePorPrimeiroElemento(vetores_de_adj[aresta_atual.destino], aresta_atual.inicio);
+    int indice_do_proximo_elemento = indice_do_Vertice_anterior_na_adj_do_vertice_atual + 1;
+    
+    //Saber se esse indice pertence ao vetor de Adj do meu vertice
+    if (indice_do_proximo_elemento >= 0 && indice_do_proximo_elemento < vetores_de_adj[aresta_atual.destino].size()){
+        Aresta proxima_aresta = {aresta_atual.destino, vetores_de_adj[aresta_atual.destino][indice_do_proximo_elemento].first};
+        dfs_tunada(vetores_de_adj, aresta_inicial, proxima_aresta, vertices_visitados);
+    }
+    else{
+        return;
+    }
 }
 
 
@@ -163,19 +186,30 @@ int main() {
         vetores_de_adj_com_inclinacao.push_back(vetor_de_adj_com_inclinacao);
     }
     
-    ordenarVetoresInternosDecrescente(vetores_de_adj_com_inclinacao);
+    ordenar_vetores_de_adj_com_inclinacao(vetores_de_adj_com_inclinacao);
     //imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
     int vertice_inicial = 0;
    
     Aresta aresta_inicial = {vertice_inicial, vetores_de_adj_com_inclinacao[vertice_inicial][0].first};
     
-    std::cout << "Aresta inicial inicio: " << aresta_inicial.inicio << "Aresta inicial destino: "  << aresta_inicial.destino << std::endl;
-    imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
+    //std::cout << "Aresta inicial inicio: " << aresta_inicial.inicio << "Aresta inicial destino: "  << aresta_inicial.destino << std::endl;
+    // imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
+    std::vector<std::vector<int>> faces;
     
-    
-    
-    
+    faces[0].push_back(aresta_inicial.inicio);
 
+
+    dfs_tunada(
+        vetores_de_adj_com_inclinacao,
+        aresta_inicial,
+        aresta_inicial,
+        faces[0]
+    );
+    
+    
+    for (int valor : faces[0]) {
+        std::cout << valor << " ";
+    }
     
     arquivo.close(); 
     return 0;
