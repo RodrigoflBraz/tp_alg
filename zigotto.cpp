@@ -85,6 +85,18 @@ void ordenarVetoresInternosDecrescente(std::vector<std::vector<std::pair<int, do
     }
 }
 
+void dfs_tunada(
+    const std::vector<std::vector<std::pair<int, double>>>& vetorDeVetoresDePar,
+    const Aresta& aresta_inicial,
+    const Aresta& aresta_atual
+){
+
+
+
+
+
+}
+
 
 
 int main() {
@@ -153,12 +165,14 @@ int main() {
     
     ordenarVetoresInternosDecrescente(vetores_de_adj_com_inclinacao);
     //imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
-   
-    std::set<int> visitados; // Conjunto para controlar vértices visitados
-    
-
-    
     int vertice_inicial = 0;
+   
+    Aresta aresta_inicial = {vertice_inicial, vetores_de_adj_com_inclinacao[vertice_inicial][0].first};
+    
+    std::cout << "Aresta inicial inicio: " << aresta_inicial.inicio << "Aresta inicial destino: "  << aresta_inicial.destino << std::endl;
+    imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
+    
+    
     
     
 
