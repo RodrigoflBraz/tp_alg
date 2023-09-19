@@ -7,7 +7,9 @@
 #include <utility>
 #include <set>
 #include <utility>
-
+        std::cout << "Cheguei aqui e não achei PORRA, onde eu estou:  " << aresta_atual.destino << "EU procurava:   " <<   aresta_atual.inicio <<  std::endl;
+        imprimirVetorAdjComInclinacao(vetores_de_adj[aresta_atual.destino], aresta_atual.destino);
+        void abort(void);
 struct Aresta {
     int inicio, destino;
 };

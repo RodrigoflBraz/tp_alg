@@ -74,6 +74,16 @@ void imprimirVetoresAdjComInclinacao(const std::vector<std::vector<std::pair<int
     }
 }
 
+
+void imprimirVetorAdjComInclinacao(const std::vector<std::pair<int, double>>& vetor, int i) {
+    
+    for (const auto& par : vetor) {
+        std::cout << "Inicio: " << i << "Destino: " << par.first << ", Inclinacao: " << par.second << std::endl;
+    }
+}
+
+
+
 void ordenar_vetores_de_adj_com_inclinacao(std::vector<std::vector<std::pair<int, double>>>& vetor) {
     for (std::vector<std::pair<int, double>>& vetor_interno : vetor) {
         std::sort(vetor_interno.begin(), vetor_interno.end(),
@@ -113,32 +123,52 @@ void dfs_tunada(
     std::vector<int>& vertices_visitados)
 {   
     
+    // std::cout << "Cheguei aqui BFS: " << "Inicio:  " <<aresta_atual.inicio<< "Destino:  " << aresta_atual.destino << std::endl;
+    // std::cout << "Cheguei aqui BFS: " << "Aresta inicial inicio:  " <<aresta_inicial.inicio<< "Aresta inicial destino:  " << aresta_inicial.destino << std::endl;
+    // std::cout << "Cheguei aqui BFS: " << "Tamanho do vetor:  " << vertices_visitados.size() << std::endl;
+
+    
+    
     // Se eu volto no vértice inicial, break
-    if((vertices_visitados.size() != 1) && saoArestasIguais(aresta_inicial, aresta_atual)){return;}
-    
-    
+    if((vertices_visitados.size() != 1) && saoArestasIguais(aresta_inicial, aresta_atual)){return;}   
     vertices_visitados.push_back(aresta_atual.destino);
     
     //Saber qual indice do meu vetor de adj do destino da aresta corrresponde ao inicio da minha aresta.
     int indice_do_Vertice_anterior_na_adj_do_vertice_atual = encontrarIndicePorPrimeiroElemento(vetores_de_adj[aresta_atual.destino], aresta_atual.inicio);
     int indice_do_proximo_elemento = indice_do_Vertice_anterior_na_adj_do_vertice_atual + 1;
-    
+
+    if ((indice_do_Vertice_anterior_na_adj_do_vertice_atual == -1) && (vetores_de_adj[aresta_atual.destino].size() > 1)){
+        int tamanho = vetores_de_adj[aresta_atual.destino].size();
+        tamanho -- ;
+        
+        Aresta proxima_aresta = {aresta_atual.destino, vetores_de_adj[aresta_atual.destino][tamanho].first};
+        dfs_tunada(vetores_de_adj, aresta_inicial, proxima_aresta, vertices_visitados);
+        
+    }
+
     //Saber se esse indice pertence ao vetor de Adj do meu vertice
     if (indice_do_proximo_elemento >= 0 && indice_do_proximo_elemento < vetores_de_adj[aresta_atual.destino].size()){
         Aresta proxima_aresta = {aresta_atual.destino, vetores_de_adj[aresta_atual.destino][indice_do_proximo_elemento].first};
         dfs_tunada(vetores_de_adj, aresta_inicial, proxima_aresta, vertices_visitados);
     }
+    //else
     else{
-        Aresta proxima_aresta = {aresta_atual.destino, vetores_de_adj[aresta_atual.destino][0].first};
-        dfs_tunada(vetores_de_adj, aresta_inicial, proxima_aresta, vertices_visitados);        
+        if(vetores_de_adj[aresta_atual.destino].size() == 1){
+            Aresta proxima_aresta = {aresta_atual.destino, vetores_de_adj[aresta_atual.destino][0].first};
+            dfs_tunada(vetores_de_adj, aresta_inicial, proxima_aresta, vertices_visitados); 
+        }
     }
+
+    // }
+    // return;
+
 }
 
 
 
 int main() {
     
-    std::ifstream arquivo("C:\\Users\\rodri\\Desktop\\tp_alg\\cotovelo.txt"); 
+    std::ifstream arquivo("C:\\RPA\\outros_projetos\\tp_alg-1\\cotovelo.txt"); 
 
     if (!arquivo) {
         std::cerr << "Erro ao abrir o arquivo." << std::endl;
@@ -157,7 +187,7 @@ int main() {
     int grau_vertice;
     int vertice_adj_atual;
     
-    
+      
     // Computar os vértices nas EDS
     for (int i = 0; i < numero_vertices; i++) {
         
@@ -200,29 +230,31 @@ int main() {
     
     std::vector<std::vector<int>> faces;
 
+    int interacao_num = 0;
     
-
     std::cout << "Cheguei aqui 1" << std::endl;
     for(int i = 0; i < numero_faces; i++){
-        
-        Aresta aresta_inicial;
+        Aresta Aresta_usada;
         
 
-        //Definir qual o vértice vamos usar como inicial nessa iteração da BFS
+        //Definir qual o vértice vamos usar coasdmo inicial nessa iteração da BFS
         for(int j = 0; j < numero_vertices; j++){
             if(vetores_de_adj_com_inclinacao[j].size() > 0){
-                Aresta aresta_inicial = {j, vetores_de_adj_com_inclinacao[j][0].first};
+                Aresta_usada = {j, vetores_de_adj_com_inclinacao[j][0].first};
                 faces.push_back(std::vector<int>());
-                faces[i].push_back(aresta_inicial.inicio);
+                faces[i].push_back(Aresta_usada.inicio);
+                std::cout << "Cheguei aqui 2   " << Aresta_usada.inicio<< Aresta_usada.destino << std::endl;
                 break;
                 }
         }
         
         std::cout << "Cheguei aqui 3" << std::endl;
+        std::cout << "Tamanho do vetor:  " << faces[i].size() << std::endl;
+
         dfs_tunada(
             vetores_de_adj_com_inclinacao,
-            aresta_inicial,
-            aresta_inicial,
+            Aresta_usada,
+            Aresta_usada,
             faces[i]
         );
     
@@ -233,11 +265,18 @@ int main() {
             int vertice_inicio = faces[i][n];
             int vertice_destino = faces[i][n+1];
             removerValor(vetores_de_adj_com_inclinacao, vertice_inicio, vertice_destino);
+                 
         }
         
+        for (const std::vector<int>& vetor : faces) {
+            for (int elemento : vetor) {
+                std::cout << elemento << " ";
+            }
+            std::cout << std::endl;
+        }
     }
     
-    std::cout << "Cheguei aqui 2" << std::endl;
+    std::cout << "Cheguei aqui 234t34t34t" << std::endl;
 
     std::cout << numero_faces << std::endl;
 
@@ -247,9 +286,10 @@ int main() {
         for (int elemento : vetor) {
             std::cout << elemento << " ";
         }
+        
         std::cout << std::endl;
     }   
-    
+    imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
     return 0;
 }
 

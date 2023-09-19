@@ -247,7 +247,7 @@ int main() {
         }
         std::cout << std::endl;
     }   
-    
+    imprimirVetoresAdjComInclinacao(vetores_de_adj_com_inclinacao);
     return 0;
 }
 
